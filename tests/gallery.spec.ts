@@ -7,7 +7,7 @@ test('gallery lists exactly 28 working original design cards', async ({page})=>{
   await expect(page.locator('.thumbnail')).toHaveCount(28);
   await page.getByRole('button',{name:'Surfaces',exact:true}).click();
   await expect(page.locator('.style-card')).toHaveCount(6);
-  await page.getByRole('button',{name:'All styles',exact:true}).click();
+  await page.locator('.filter-chips').getByRole('button',{name:'All styles',exact:true}).click();
   await page.getByRole('searchbox',{name:'Search designs'}).fill('aurora');
   await expect(page.locator('.style-card')).toHaveCount(1);
   await expect(page.getByRole('heading',{name:'Aurora UI'})).toBeVisible();
@@ -65,7 +65,7 @@ test('mobile gallery remains responsive and navigable',async({page})=>{
   await page.goto('/');
   await expect(page.locator('.style-card')).toHaveCount(28);
   await page.getByRole('button',{name:'Open menu'}).click();
-  await page.getByRole('button',{name:'Compare styles'}).click();
+  await page.getByRole('navigation',{name:'Main navigation'}).getByRole('button',{name:'Compare styles'}).click();
   await expect(page.getByRole('heading',{name:/Two styles/})).toBeVisible();
   const width=await page.evaluate(()=>document.documentElement.scrollWidth);
   expect(width).toBeLessThanOrEqual(400);
