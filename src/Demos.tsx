@@ -14,10 +14,23 @@ function Glass(){return <div className="demo demo--glass">
   <div className="glass-window"><div className="glass-window-top"><span>◈ &nbsp; Creative space</span><span>● ● ●</span></div><div className="glass-window-body"><span>MONDAY / OVERVIEW</span><h2>Everything in<br/>one clear view.</h2><div className="glass-progress"><i/></div><div className="glass-metrics"><div><b>84%</b><small>Focus</small></div><div><b>12</b><small>Projects</small></div><div><b>4.9</b><small>Flow score</small></div></div></div></div></main>
   <Details eyebrow="DESIGNED FOR FLOW" title="A softer way to work." items={['A place for every idea','Translucent focus panels','Keep the big picture clear']}/>
 </div>;}
-function Neumo(){const [minutes,setMinutes]=useState(25),[active,setActive]=useState(false);return <div className="demo demo--neumo">
-  <header className="neumo-nav"><b>softly<span>●</span></b><span>focus / rest / repeat</span><button onClick={()=>setActive(!active)}>{active?'Pause session':'Begin session'}</button></header>
+function Neumo(){
+  const [minutes,setMinutes]=useState(25);
+  const [secondsLeft,setSecondsLeft]=useState(25*60);
+  const [active,setActive]=useState(false);
+  useEffect(()=>{
+    if(!active)return;
+    const id=window.setInterval(()=>setSecondsLeft(s=>Math.max(0,s-1)),1000);
+    return ()=>window.clearInterval(id);
+  },[active]);
+  useEffect(()=>{if(secondsLeft===0&&active)setActive(false);},[secondsLeft,active]);
+  const changeMinutes=(next:number)=>{setMinutes(next);setSecondsLeft(next*60);setActive(false);};
+  const toggleTimer=()=>{if(secondsLeft===0)setSecondsLeft(minutes*60);setActive(v=>!v);};
+  const displayTime=String(Math.floor(secondsLeft/60)).padStart(2,'0')+':'+String(secondsLeft%60).padStart(2,'0');
+  return <div className="demo demo--neumo">
+  <header className="neumo-nav"><b>softly<span>●</span></b><span>focus / rest / repeat</span><button onClick={toggleTimer}>{active?'Pause session':'Begin session'}</button></header>
   <main className="neumo-main"><span className="demo-eyebrow">YOUR PEACEFUL PRODUCTIVITY SPACE</span><h1>Find your<br/>quiet rhythm.</h1><p>A little less noise. A lot more presence. Make today feel lighter.</p>
-  <div className="neumo-device"><div className="neumo-device-top"><span>FOCUS MODE</span><span>{active?'● IN SESSION':'○ READY'}</span></div><div className="neumo-dial"><div><strong>{minutes}:00</strong><small>MINUTES OF FOCUS</small></div></div><div className="neumo-actions"><button aria-label="Decrease minutes" onClick={()=>setMinutes(Math.max(5,minutes-5))}>−</button><button className="neumo-main-btn" onClick={()=>setActive(!active)}>{active?'Ⅱ Pause':'▶ Start'}</button><button aria-label="Increase minutes" onClick={()=>setMinutes(Math.min(90,minutes+5))}>+</button></div></div></main>
+  <div className="neumo-device"><div className="neumo-device-top"><span>FOCUS MODE</span><span>{active?'● IN SESSION':'○ READY'}</span></div><div className="neumo-dial"><div><strong>{displayTime}</strong><small>MINUTES OF FOCUS</small></div></div><div className="neumo-actions"><button aria-label="Decrease minutes" onClick={()=>changeMinutes(Math.max(5,minutes-5))}>−</button><button className="neumo-main-btn" onClick={toggleTimer}>{active?'Ⅱ Pause':'▶ Start'}</button><button aria-label="Increase minutes" onClick={()=>changeMinutes(Math.min(90,minutes+5))}>+</button></div></div></main>
   <Details eyebrow="FOCUS WITHOUT FRICTION" title="Do more by doing less." items={['Set your own pace','Tactile calm controls','Make space for a break']}/>
 </div>;}
 function Clay(){const [mood,setMood]=useState('Make magic');return <div className="demo demo--clay">
