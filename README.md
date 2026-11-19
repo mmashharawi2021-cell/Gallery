@@ -38,6 +38,7 @@ Open the local URL shown by Vite. To validate and build:
 npm test
 npm run build
 npm run preview
+npm run test:e2e
 ```
 
 ## Deployment
@@ -54,6 +55,9 @@ src/
   catalog.ts       28 styles and selected implementation excerpts
   PreviewArt.tsx   Individually created miniature artwork for each style
   Demos.tsx        28 standalone interactive React page components
+  Compare.tsx      Side-by-side interactive comparison of any two styles
+  compare.css      Responsive comparison workspace
+  source.ts        Exact React and CSS source extraction for Code Explorer
   app.css          Main gallery design + 28 artwork compositions
   demos.css        Shared rules for all standalone pages
   demo-a.css       Styles 01–07
@@ -62,6 +66,8 @@ src/
   demo-d.css       Styles 22–28
 scripts/
   validate.mjs     No-dependency checks for complete catalogue coverage
+tests/
+  gallery.spec.ts  Browser regression tests (search, favorites, viewports, comparison, interactions)
 .github/workflows/
   pages.yml        Test, build, deploy to Pages
 ```
@@ -73,7 +79,8 @@ scripts/
 - 5 category filters, sorting, and favorite styles saved locally
 - Interactive responsive preview in isolated iframes; mobile (390px), tablet (820px) and desktop
 - Each design available as a standalone, shareable page
-- Design color tokens and useful selected JSX/CSS excerpts, with copy controls
+- Design color tokens and exact React/TSX and CSS source extracted from the real codebase, with copy controls
+- Side-by-side comparison at `/#/compare`, with independent design selectors, responsive views and palette inspection
 - Keyboard-accessible links/buttons, labeled controls and reduced-motion support
 - Pure CSS illustrations where possible; no paid or copyrighted visual assets
 
@@ -85,4 +92,4 @@ All 28 sample brands and fictional product concepts were created as illustrative
 
 React 18, TypeScript, Vite 6, CSS, lucide-react, GitHub Actions and GitHub Pages.
 
-MIT License © 2026.
+© 2026. All demo brands and layouts are original concepts. No LICENSE file has been added.
