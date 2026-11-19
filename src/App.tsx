@@ -4,8 +4,9 @@ import { categories, cssTokens, getStyle, sourceSnippet, styles } from './catalo
 import type { DesignStyle, StyleCategory } from './catalog';
 import { PreviewArt } from './PreviewArt';
 import { StyleDemo } from './Demos';
+import Compare from './Compare';
 
-type Route = { page:'gallery'|'detail'|'render'|'about'; slug:string };
+type Route = { page:'gallery'|'detail'|'render'|'about'|'compare'; slug:string };
 type PreviewDevice = 'desktop'|'tablet'|'mobile';
 type DetailTab = 'preview'|'tokens'|'code';
 function readRoute():Route {
@@ -13,6 +14,7 @@ function readRoute():Route {
   if (path[0]==='styles' && path[1]) return {page:'detail',slug:path[1]};
   if (path[0]==='render' && path[1]) return {page:'render',slug:path[1]};
   if (path[0]==='about') return {page:'about',slug:''};
+  if (path[0]==='compare') return {page:'compare',slug:''};
   return {page:'gallery',slug:''};
 }
 function go(path:string){window.location.hash='#/'+path;}
@@ -32,7 +34,7 @@ function useFavorites(){
 function Logo(){return <button className="brand" onClick={()=>go('')} aria-label="Go to gallery"><span className="brand-symbol"><i/><i/><i/><i/></span><span>form<span className="brand-dot">.</span>atlas</span></button>;}
 function Header({active}:{active?:'gallery'|'about'}){
   const [menu,setMenu]=useState(false);
-  return <header className="site-header"><div className="shell header-inner"><Logo/><nav className={menu?'site-nav open':'site-nav'} aria-label="Main navigation"><button className={active==='gallery'?'active':''} onClick={()=>{go('');setMenu(false);}}>Explore styles</button><button className={active==='about'?'active':''} onClick={()=>{go('about');setMenu(false);}}>About the project</button><a href="https://github.com/mmashharawi2021-cell/Gallery" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={13}/></a></nav><div className="header-right"><span className="header-live"><i/> 28 ORIGINAL DEMOS</span><button className="mobile-menu" onClick={()=>setMenu(!menu)} aria-label={menu?'Close menu':'Open menu'}>{menu?<X size={20}/>:<Menu size={20}/>}</button></div></div></header>;
+  return <header className="site-header"><div className="shell header-inner"><Logo/><nav className={menu?'site-nav open':'site-nav'} aria-label="Main navigation"><button className={active==='gallery'?'active':''} onClick={()=>{go('');setMenu(false);}}>Explore styles</button><button onClick={()=>{go('compare');setMenu(false);}}>Compare styles</button><button className={active==='about'?'active':''} onClick={()=>{go('about');setMenu(false);}}>About the project</button><a href="https://github.com/mmashharawi2021-cell/Gallery" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={13}/></a></nav><div className="header-right"><span className="header-live"><i/> 28 ORIGINAL DEMOS</span><button className="mobile-menu" onClick={()=>setMenu(!menu)} aria-label={menu?'Close menu':'Open menu'}>{menu?<X size={20}/>:<Menu size={20}/>}</button></div></div></header>;
 }
 function Footer(){return <footer className="site-footer"><div className="shell footer-inner"><div><div className="footer-brand">form<span>.</span>atlas</div><p>28 original ways to experience the web.<br/>Designed to inspire. Built to explore.</p></div><div className="footer-links"><button onClick={()=>go('')}>All styles <ArrowUpRight size={13}/></button><button onClick={()=>go('about')}>About <ArrowUpRight size={13}/></button><a href="https://github.com/mmashharawi2021-cell/Gallery" target="_blank" rel="noopener noreferrer">Source on GitHub <ArrowUpRight size={13}/></a></div><div className="footer-copy">© 2026 FORM ATLAS &nbsp; • &nbsp; AN ORIGINAL DESIGN EXPLORATION</div></div></footer>;}
 function FavoriteButton({style,active,onToggle}:{style:DesignStyle;active:boolean;onToggle:()=>void}){
@@ -59,7 +61,7 @@ function Gallery({favorites,toggle}:{favorites:string[];toggle:(slug:string)=>vo
       <div className="results-line"><span>SHOWING <b>{String(filtered.length).padStart(2,'0')}</b> OF 28 DESIGNS</span>{(search||category!=='All styles'||onlyFavorites)&&<button onClick={()=>{setSearch('');setCategory('All styles');setOnlyFavorites(false);}}>Reset filters <X size={13}/></button>}</div>
       {filtered.length>0?<div className="styles-grid">{filtered.map(s=><GalleryCard key={s.slug} style={s} index={styles.indexOf(s)} favorite={favorites.includes(s.slug)} onToggle={()=>toggle(s.slug)}/>)}</div>:<div className="empty-state"><Search size={28}/><h3>No styles found</h3><p>Try a different keyword or clear your current filters.</p><button onClick={()=>{setSearch('');setCategory('All styles');setOnlyFavorites(false);}}>View all styles <ArrowRight size={16}/></button></div>}
     </section>
-    <section className="outro shell"><div><span className="section-eyebrow">02 / CREATE SOMETHING NEW</span><h2>Inspiration is just<br/><i>the beginning.</i></h2><p>Use the live demos to explore, then inspect the design tokens and copy working implementation patterns.</p><button onClick={()=>go('about')}>Inside the project <ArrowUpRight size={17}/></button></div><div className="outro-art" aria-hidden="true"><span>FORM</span><span>✷</span><span>ATLAS</span></div></section><Footer/>
+    <section className="outro shell"><div><span className="section-eyebrow">02 / CREATE SOMETHING NEW</span><h2>Inspiration is just<br/><i>the beginning.</i></h2><p>Use the live demos to explore, then inspect the design tokens and copy working implementation patterns.</p><button onClick={()=>go('compare')}>Compare styles <ArrowUpRight size={17}/></button></div><div className="outro-art" aria-hidden="true"><span>FORM</span><span>✷</span><span>ATLAS</span></div></section><Footer/>
   </div>;
 }
 async function copyToClipboard(value:string,setCopied:(value:boolean)=>void){
@@ -96,5 +98,6 @@ export default function App(){
     return style?<Detail style={style} favorite={favoriteSlugs.includes(style.slug)} onToggle={()=>toggle(style.slug)}/>:<div className="app-surface"><Header/><div className="shell not-found"><h1>Style not found.</h1><button onClick={()=>go('')}>Explore all styles <ArrowRight size={16}/></button></div><Footer/></div>;
   }
   if(route.page==='about')return <About/>;
+  if(route.page==='compare')return <div className="app-surface"><Header/><Compare/><Footer/></div>;
   return <Gallery favorites={favoriteSlugs} toggle={toggle}/>;
 }
