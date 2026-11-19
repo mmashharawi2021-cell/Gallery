@@ -17,7 +17,7 @@ for(const slug of slugs){
 assert.ok((demos.match(/function [A-Z][a-zA-Z]+\(/g)||[]).length>=28,'Must implement 28 standalone React components');
 assert.ok(css.length>40000,'Landing page styling is incomplete');
 const markup = read('src/App.tsx');
-for(const feature of ['form-atlas-favorites','aria-label="Search designs"','#/render/','copyToClipboard','style-card','device-mobile','sourceSnippet']){
+for(const feature of ['form-atlas-favorites','aria-label="Search designs"','#/render/','copyToClipboard','style-card','device-frame device-','sourceSnippet']){
   assert.ok(markup.includes(feature),'Missing gallery feature: '+feature);
 }
 console.log('PASS: 28 unique styles, 28 demo routes, 28 preview illustrations, theme CSS and core gallery features.');
