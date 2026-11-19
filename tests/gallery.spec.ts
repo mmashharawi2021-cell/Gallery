@@ -60,6 +60,14 @@ test('interactive demo updates monthly estimate',async({page})=>{
   await expect(page.locator('.int-total strong')).toContainText('$180');
 });
 
+test('standalone preview CTA does not break hash routes', async ({page})=>{
+  await page.goto('/#/render/glassmorphism');
+  await page.getByRole('link',{name:/Launch studio/}).click();
+  await expect(page.locator('.demo--glass')).toBeVisible();
+  await expect(page.locator('.demo-details')).toBeVisible();
+  await expect(page).toHaveURL(/#\/render\/glassmorphism$/);
+});
+
 test('mobile gallery remains responsive and navigable',async({page})=>{
   await page.setViewportSize({width:390,height:844});
   await page.goto('/');
