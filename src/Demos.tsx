@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { CSSProperties, ReactNode, UIEvent } from 'react';
 
 function Details({eyebrow,title,items}:{eyebrow:string;title:string;items:string[]}) {
@@ -82,6 +82,26 @@ function Organic(){return <div className="demo demo--organic"><nav className="or
 function Isometric(){const [selected,setSelected]=useState('Create');return <div className="demo demo--iso"><nav className="iso-nav"><b>◈ BLOCKS</b><span>BUILD / CONNECT / CREATE</span><a href="#discover">START BUILDING ↗</a></nav><main className="iso-main"><div className="iso-copy"><span className="demo-eyebrow">A DIFFERENT POINT OF VIEW</span><h1>Build your<br/>own world.</h1><p>Little blocks. Big possibilities. See what happens when ideas click together.</p><div className="iso-buttons">{['Create','Connect','Explore'].map(s=><button className={s===selected?'active':''} key={s} onClick={()=>setSelected(s)}>{s}</button>)}</div><span className="iso-status">CURRENT MODE / {selected.toUpperCase()}</span></div><div className="iso-stage"><div className="iso-plane"><div className="iso-building b1"/><div className="iso-building b2"/><div className="iso-building b3"/><div className="iso-building b4"/><div className="iso-building b5"/><div className="iso-building b6"/></div><span>WORLD 01 / ISOMETRIC DISTRICT</span></div></main><Details eyebrow="DESIGNED FROM ANOTHER ANGLE" title="Make complexity feel simple." items={['A dimensional diagram','Systems with personality','An intuitive visual metaphor']}/></div>;}
 function Interactive(){const [seats,setSeats]=useState(4);const [plan,setPlan]=useState<'Starter'|'Pro'>('Pro');const [color,setColor]=useState('#9a82ff');const monthly=seats*(plan==='Pro'?18:9);return <div className="demo demo--interactive" style={{'--studio-accent':color} as CSSProperties}><nav className="int-nav"><b>✳ STUDIO.</b><span>PRODUCT / PRICING / SUPPORT</span><a href="#discover">Learn more ↗</a></nav><main className="int-main"><div className="int-copy"><span className="demo-eyebrow">YOUR WORKSPACE. YOUR RULES.</span><h1>Make it<br/>your own.</h1><p>Go from idea to identity in seconds. Change the options and see your workspace come alive.</p><Jump>What’s included?</Jump></div><div className="int-config"><header><b>Customize your workspace</b><span>LIVE PREVIEW ●</span></header><div className="int-card"><span>STUDIO / {plan.toUpperCase()}</span><strong>Ideas happen<br/>here<span>.</span></strong><div>✳ &nbsp; Made for your team</div></div><label>Choose your accent color</label><div className="int-colors">{['#9a82ff','#f58ba9','#5bb7a4','#efad5b'].map(c=><button aria-label={'Select color '+c} key={c} className={c===color?'selected':''} onClick={()=>setColor(c)} style={{background:c}}/>)}</div><label>Team members <b>{seats}</b></label><input type="range" min="1" max="20" value={seats} onChange={e=>setSeats(Number(e.target.value))} aria-label="Number of team members"/><div className="int-plans">{(['Starter','Pro'] as const).map(p=><button key={p} className={plan===p?'selected':''} onClick={()=>setPlan(p)}>{p}</button>)}</div><div className="int-total"><span>ESTIMATED MONTHLY TOTAL</span><strong>${monthly}<small>/mo</small></strong></div></div></main><Details eyebrow="BUILT AROUND YOU" title="Try before you decide." items={['Real-time live customization','Clear choices and feedback','Every click does something']}/></div>;}
 export function StyleDemo({slug}:{slug:string}){
+  // Hash fragments are reserved for the app's client-side routes. Handle in-demo
+  // navigation without changing the URL hash or tearing down the preview.
+  useEffect(()=>{
+    const navigateInsideDemo=(event:MouseEvent)=>{
+      const target=event.target;
+      if(!(target instanceof Element))return;
+      const link=target.closest('a[href="#discover"], a[href="#top"]');
+      if(!link)return;
+      event.preventDefault();
+      if(link.getAttribute('href')==='#top'){
+        const scroller=document.querySelector<HTMLElement>('.story-scroll');
+        if(scroller)scroller.scrollTo({top:0,behavior:'smooth'});
+        else window.scrollTo({top:0,behavior:'smooth'});
+      } else {
+        document.getElementById('discover')?.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    };
+    document.addEventListener('click',navigateInsideDemo);
+    return ()=>document.removeEventListener('click',navigateInsideDemo);
+  },[]);
   switch(slug){
     case 'glassmorphism':return <Glass/>;
     case 'neumorphism':return <Neumo/>;
